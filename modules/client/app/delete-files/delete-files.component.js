@@ -23,22 +23,22 @@
 *********************************************************************/
 
 /*********************************************************************
- * modules/client/app/app.module.js
+ * modules/client/app/delete-files/delete-files.component.js
  *
- * angular.module() - Define the 'storjApp' module and register its
- *                    dependencies
+ * angular.module.component() - Define the 'delete-files' module
+ *                              component and its controller
 *********************************************************************/
 'use strict';
 
-/*********************************************************************
- * indexApp module definition
-*********************************************************************/
-angular.module('storjApp', [
-  'ngRoute',
-  'ngMaterial',
-  'core',
-  'index',
-  'listBuckets',
-  'listFiles',
-  'deleteFiles'
-]);
+angular.
+  module('deleteFiles').
+    component('deleteFiles', {
+      templateUrl: '../delete-files/delete-files.template.html',
+      controller: ['Util',
+        function DeleteFilesController(Util) {
+          var self = this;
+
+          self.filelist = Util.results.query();
+        }
+      ]
+    });

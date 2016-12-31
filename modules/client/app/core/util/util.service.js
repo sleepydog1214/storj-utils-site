@@ -46,6 +46,12 @@ angular.
               method: 'GET',
               isArray: false
             }
+          }),
+          results: $resource('deletefiles/', {}, {
+            query: {
+              method: 'GET',
+              isArray: false
+            }
           })
         }
       }

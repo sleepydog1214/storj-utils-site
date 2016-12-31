@@ -71,6 +71,9 @@ angular.
         when('/list-files', {
           template: '<list-files></list-files>'
         }).
+        when('/delete-files', {
+          template: '<delete-files></delete-files>'
+        }).
         otherwise('/');
       }
   ]);

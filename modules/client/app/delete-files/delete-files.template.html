@@ -1,4 +1,4 @@
-/*********************************************************************
+<!-- *****************************************************************
  The MIT License (MIT)
 
  Copyright (c) 2016 Thomas Suchyta
@@ -20,25 +20,11 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
-*********************************************************************/
-
-/*********************************************************************
- * modules/client/app/app.module.js
- *
- * angular.module() - Define the 'storjApp' module and register its
- *                    dependencies
-*********************************************************************/
-'use strict';
-
-/*********************************************************************
- * indexApp module definition
-*********************************************************************/
-angular.module('storjApp', [
-  'ngRoute',
-  'ngMaterial',
-  'core',
-  'index',
-  'listBuckets',
-  'listFiles',
-  'deleteFiles'
-]);
+****************************************************************** -->
+<div layout-padding>
+  <h3 class="md-headline">Storj Buckets and Files</h3>
+  <div class="trsuchText" layout-padding>
+    <p class="md-body-1">Delete Bucket Files</p>
+    <p class="md-body-2">{{$ctrl.message}}</p>
+  </div>
+</div>

@@ -29,11 +29,15 @@
  *
  * GET intro -
  * GET index - Render home page
+ * GET buckets - list all storj buckets
+ * GET files - List all files in each bucket
+ * GET deletefiles - Delete all files in each bucket
 *********************************************************************/
 'use strict';
 
 var express = require('express');
 var router  = express.Router();
+var async   = require('async');
 
 /*********************************************************************
  * GET index - Render home page
@@ -58,15 +62,6 @@ router.get('/buckets', function(req, res, next) {
       console.log('warn', 'You have not created any buckets.');
     }
 
-    // Log out info for each bucket
-    buckets.forEach(function(bucket) {
-      console.log(
-        'info',
-        'ID: %s, Name: %s, Storage: %s, Transfer: %s',
-        [bucket.id, bucket.name, bucket.storage, bucket.transfer]
-      );
-    });
-
     res.json(buckets);
   })
 });
@@ -90,9 +85,9 @@ router.get('/files', function(req, res, next) {
       console.log('warn', 'You have not created any buckets.');
     }
 
-    buckets.forEach(function(bucket) {
+    async.each(buckets, function(bucket, callback) {
       var bucketid = bucket.id;
-      var abucket = {bucketid: bucketid,
+      var abucket = {bucketid: bucket.id,
                      bucketname: bucket.name,
                      files: []};
 
@@ -104,17 +99,72 @@ router.get('/files', function(req, res, next) {
           console.log('warn', 'There are no files in this bucket.');
         }
 
-        files.forEach(function(file) {
-          console.log('info',
-          'Name: %s, Type: %s, Size: %s bytes, ID: %s',
-          [file.filename, file.mimetype, file.size, file.id]
-          );
-          abucket.files.push({id: file.id, name: file.filename});
+        abucket.files.push(files);
+        filelist.buckets.push(abucket);
+        callback(null);
+      })
+      }, function(err) {
+          if (err) {
+            console.log('error', err.message);
+          }
+          res.json(filelist);
+    });
+  });
+});
+
+/*********************************************************************
+ * GET deletefiles - Delete all files in each bucket
+*********************************************************************/
+router.get('/deletefiles', function(req, res, next) {
+  var client = req.client;
+
+  var results = {message: "Successfully deleted all files in each bucket."};
+
+  console.log('deleting all files');
+  client.getBuckets(function(err, buckets) {
+    if (err) {
+      // Handle error on failure.
+      console.log('error', err.message);
+    }
+
+    if (!buckets.length) {
+      console.log('warn', 'You have not created any buckets.');
+    }
+
+    async.each(buckets, function(bucket, callback) {
+      var bucketid = bucket.id;
+
+      console.log('deleting files from: ' + bucketid);
+      client.listFilesInBucket(bucketid, function(err, files) {
+        async.each(files, function(file, callback) {
+          var fileid = file.id;
+
+          client.removeFileFromBucket(bucketid, fileid, function(err) {
+            if (err) {
+              console.log('error', err.message);
+            }
+            console.log('deleting file: ' + fileid);
+          });
+
+          // async.each files callback
+          callback(null);
+        }, function(err) {
+          if (err) {
+            results.message = 'Error deleting file';
+          }
+
         });
       });
-      filelist.buckets.push(abucket);
+
+      // async.each buckets callback
+      callback(null);
+    }, function(err) {
+        if (err) {
+          console.log('error', err.message);
+        }
+        console.log('completed deleting all files');
+        res.json(results);
     });
-    res.json(filelist);
   });
 });
 

@@ -25,11 +25,17 @@
   <h3 class="md-headline">Storj Buckets and Files</h3>
   <div class="trsuchText" layout-padding>
     <p class="md-body-1">List Buckets and Files</p>
-    <md-list>
-      <md-list-item ng-repeat="bucket in $ctrl.filelist">
-        <p>name: {{bucket}}</p>
-        <p>id: {{bucket}}</p>
-      </md-list-item>
-    </md-list>
+    <ul>
+      <li ng-repeat="bucket in $ctrl.filelist.buckets">
+        <p>bucket name: {{bucket.bucketname}}</p>
+        <p>bucket id: {{bucket.bucketid}}</p>
+        <ul>
+          <li ng-repeat="file in bucket.files[0]">
+            <p>file name: {{file.filename}}</p>
+            <p>file id: {{file.id}}</p>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 </div>
